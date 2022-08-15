@@ -1,25 +1,24 @@
-import React, {createContext} from 'react'
-// const { Provider, Consumer } = createContext()
+import React from 'react'
 
 // 子组件(渲染列表)
 function ListItem(props) {
     // 通过该组件的标签内的children属性 接受到父组件的值
-    const { children } =  props
+    // const { children } =  props
     return (
         <>
             <h3>this is Son2</h3>
-            <h4>{ children.value }</h4>
+            <h4>{ props.children.value }</h4>
             <ul>
-                { children.list.map(item=> {
+                { props.children.list.map(item=> {
                     return <li key={ item.id }>{ item.name }</li>
                 })}
             </ul>
             <ul>
-                { children.arr.map(item=> {
-                    return <li key={ item }>{ children.fn(item) }</li>
+                { props.children.arr.map(item=> {
+                    return <li key={ item }>{ props.children.fn(item) }</li>
                 })}
             </ul>
-            <p>{ children.jsx }</p>
+            <p>{ props.children.jsx }</p>
         </>
     )
 }
