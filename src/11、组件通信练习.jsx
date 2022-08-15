@@ -3,23 +3,21 @@ import React, {createContext} from 'react'
 
 // 子组件(渲染列表)
 function ListItem(props) {
-    // 通过该组件的标签内的children属性 接受到父组件的值
-    const { children } =  props
+    const { list , deleteFatherItem} = props
+
     return (
         <>
             <h3>this is Son2</h3>
-            <h4>{ children.value }</h4>
             <ul>
-                { children.list.map(item=> {
-                    return <li key={ item.id }>{ item.name }</li>
-                })}
+                { list.map(item=>
+                    <li key={item.id}>
+                        { item.name}
+                        { item.price }
+                        { item.info }
+                        <button onClick={ ()=> { deleteFatherItem(item.id) } }>删除</button>
+                    </li>
+                )}
             </ul>
-            <ul>
-                { children.arr.map(item=> {
-                    return <li key={ item }>{ children.fn(item) }</li>
-                })}
-            </ul>
-            <p>{ children.jsx }</p>
         </>
     )
 }
@@ -33,7 +31,6 @@ class App extends React.Component{
             { id: 2, name: '超级好吃的大鸡腿', price: 34.2, info: '开业大酬宾，全场8折' },
             { id: 3, name: '超级无敌的冰激凌', price: 14.2, info: '开业大酬宾，全场8折' }
         ],
-        arr: [1,2,3],
         obj: {
             name: 'jay',
             age: 40
@@ -45,13 +42,21 @@ class App extends React.Component{
         // 传递一个jsx节点
         jsx: (<span style={{ color:'red'}}>this is jsx</span>)
     }
+    deleteList=(id)=> {
+        const { list } = this.state
+        console.log(111,id)
+        this.setState({
+            list: list.filter(item=> {
+                return item.id != id
+            })
+
+        })
+    }
     render() {
         return (
             <>
                 {/*<h3>this is app</h3>*/}
-                {/*只要在组件标签的内部写了任何内容 都会出现在组件的props中的childre属性中*/}
-                {/*支持 普通文本 普通标签元素 函数 jsx*/}
-                <ListItem>{{...this.state} }</ListItem>
+                <ListItem list={ this.state.list } deleteFatherItem={ this.deleteList }/>
             </>
         )
     }
