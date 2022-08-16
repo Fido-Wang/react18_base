@@ -1,43 +1,102 @@
-import React, { useState } from 'react'
-function Son(props) {
-    // 如果useState() 中的参数不是一个固定值 而是需要通过计算得出 可以使用函数返回一个值
-    // 例: 将父组件传过来的值 当作初始状态
-    const [ sonNum , setNum] = useState(()=> props.num)
-    function add() {
-        console.log('add')
-        return setNum(sonNum + 1)
+import React from 'react'
+import { Button, Input, Space, Table, Tag } from 'antd'
+import axios from 'axios'
+import'./app.css'
+
+const { Search } = Input
+const { Column, ColumnGroup } = Table;
+
+class App extends React.Component {
+    state = {
+        list : [
+            {
+                key: '1',
+                firstName: 'John',
+                lastName: 'Brown',
+                age: 32,
+                address: 'New York No. 1 Lake Park',
+                tags: ['nice', 'developer'],
+            },
+            {
+                key: '2',
+                firstName: 'Jim',
+                lastName: 'Green',
+                age: 42,
+                address: 'London No. 1 Lake Park',
+                tags: ['loser'],
+            },
+            {
+                key: '3',
+                firstName: 'Joe',
+                lastName: 'Black',
+                age: 32,
+                address: 'Sidney No. 1 Lake Park',
+                tags: ['cool', 'teacher'],
+            },
+        ]
     }
-    return(
-        <>
-            <p>{ sonNum }</p>
-            <button onClick={ add }>+ 1</button>
-        </>
-    )
-}
+    // 搜索按钮
+    handleSearch =(value)=> {
+        console.log('search', value)
+    }
+    // 加载列表
+    loadList = async()=> {
+        const res = await axios.get('http:localhost:3001/data')
+        console.log(res)
+        this.setState({
+            list: res.data
+        })
+    }
+    componentDidMount() {
+        this.loadList()
+    }
+    render() {
+        return (
+            <>
+                <h3>this is App</h3>
+                <Button type="primary">hello</Button>
+                <Search
+                    placeholder="请输入"
+                    allowClear
+                    enterButton="Search"
+                    size="large"
+                    onSearch={ this.handleSearch }
+                />
 
-function App () {
-    // 组建的更新过程
-    // 1、组件第一次渲染
-    // a、从头开始执行该组件中的代码逻辑
-    // b、调用useState（0）将传入的参数作为状态初始值：0
-    // c、渲染组件 此时 获取到的状态count值为0
+                <Table dataSource={ this.state.list} bordered>
+                    <Column title="姓名" dataIndex="firstName" key="firstName" />
 
-    // 2、组件第二次渲染
-    // a、点击按钮 调用setCount（count+1） 修改状态 因为状态发生改变 所以组件会重新渲染
-    // b、组件重新渲染时 会再次执行该组件中的代码逻辑
-    // c、再次调用usrState（0） 此时react内部会拿到最新的状态值而非初始值 比如 该案例中最新的状态值为1
-    // d、再次渲染组件 此时 获取到的状态 count值为1
-    const [ num ,setNum ] = useState(99)
-    const [ count, setCount] = useState(1)
-    console.log('count', count)
-    return (
-        <>
-            <h3>this is App</h3>
-            <p>{ count }</p>
-            <button onClick={ ()=> { setCount( count>3? count: count+ 1)}}>+1</button>
-            <Son num={ num }/>
-        </>
-    )
+                    <Column title="年龄" dataIndex="age" key="age" />
+                    <Column title="地址" dataIndex="address" key="address" />
+                    <Column
+                        title="标签"
+                        dataIndex="tags"
+                        key="tags"
+                        render={(tags) => (
+                            <>
+                                {tags.map((tag) => (
+                                    <Tag color="blue" key={tag}>
+                                        {tag}
+                                    </Tag>
+                                ))}
+                            </>
+                        )}
+                    />
+                    <Column
+                        title="操作"
+                        key="action"
+                        render={(_, record) => (
+                            <Space size="middle">
+                                <a>Invite {record.lastName}</a>
+                                <a>Delete</a>
+                            </Space>
+                        )}
+                    />
+                </Table>
+            </>
+        )
+    }
+
 }
 
 export default App
