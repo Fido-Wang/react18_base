@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
+
 function Son(props) {
     // 如果useState() 中的参数不是一个固定值 而是需要通过计算得出 可以使用函数返回一个值
     // 例: 将父组件传过来的值 当作初始状态
     const [ sonNum , setNum] = useState(()=> props.num)
     function add() {
         console.log('add')
-        return setNum(sonNum + 1)
+        return setNum(sonNum + 1) // 第一种写法
+        return setNum(sonNum =>  sonNum + 1)  // 第二种写法 参数可以是一个箭头函数 箭头函数的默认参数就是当前的状态值
     }
     return(
         <>
